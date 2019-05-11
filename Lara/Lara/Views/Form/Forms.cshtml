@@ -1,0 +1,48 @@
+﻿@model Lara.Service.ServiceModels.FormModel
+@{
+    ViewBag.Title = "Forms";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <span class="font-weight-bold"> Form Name: </span>
+    <span class="mb-2">@Model.Name</span>
+</div>
+<div>
+    <span class="font-weight-bold"> Form Description: </span>
+    <span class="mb-2">@Model.Description</span>
+</div>
+<div>
+    <span class="font-weight-bold"> Form Fields: </span>
+</div>
+
+@{
+    foreach (var formField in Model.FormFields)
+    {
+        <div>
+            <label class="mb-1"> @formField.Name </label>
+        </div>
+        if (formField.IsRequired)
+        {
+            if (@formField.DataType == 1)
+            {
+                <input class="mb-1" type="number" required />
+            }
+            else
+            {
+                <input class="mb-1" type="text" required />
+            }
+        }
+        else
+        {
+            if (@formField.DataType == 1)
+            {
+                <input class="mb-1" type="number" />
+            }
+            else
+            {
+                <input class="mb-1" type="text" />
+            }
+        }
+    }
+}
+

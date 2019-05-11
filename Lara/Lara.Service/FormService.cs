@@ -1,4 +1,5 @@
 ﻿using Lara.Repository;
+using Lara.Service.Enums;
 using Lara.Service.ServiceModels;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Lara.Service
 
                 if (formList == null)
                 {
-                    return new List<FormModel>(); 
+                    return new List<FormModel>();
                 }
             }
 
@@ -34,6 +35,15 @@ namespace Lara.Service
                 {
                     return false;
                 }
+
+                foreach (var formField in formModel.FormFields)
+                {
+                    if (string.IsNullOrEmpty(formField.Name) || formField.DataType < 1)
+                    {
+                        return false;
+                    }
+                }
+
                 using (LARA_Entities entities = new LARA_Entities())
                 {
                     var form = entities.Forms.FirstOrDefault(f => f.Name == formModel.Name);
@@ -53,6 +63,21 @@ namespace Lara.Service
 
                     entities.Forms.Add(newForm);
                     entities.SaveChanges();
+
+                    foreach (var formField in formModel.FormFields)
+                    {
+                        var newFormField = new FormField()
+                        {
+                            FormId = newForm.Id,
+                            Required = formField.IsRequired,
+                            Name = formField.Name,
+                            DataType = ((DataTypeEnum)formField.DataType).ToString()
+                        };
+                        entities.FormFields.Add(newFormField);
+                        entities.SaveChanges();
+                    }
+
+
                     return true;
                 }
             }
@@ -60,7 +85,27 @@ namespace Lara.Service
             {
                 return false;
             }
-            
+
+        }
+
+        public FormModel GetForm(int formId)
+        {
+            FormModel formModel;
+            using (LARA_Entities entities = new LARA_Entities())
+            {
+                var formEntity = entities.Forms.FirstOrDefault(f => f.Id == formId);
+                var formFieldsEntity = entities.FormFields.Where(ff => ff.FormId == formId).ToList();
+                var userProfileEntity = entities.UserProfiles.FirstOrDefault(u => u.UserId == formEntity.CreatedBy);
+                formModel = new FormModel
+                {
+                    Name = formEntity.Name,
+                    Description = formEntity.Description,
+                    CreatedAt = formEntity.CreatedAt,
+                    CreatorUserName = userProfileEntity.UserName,
+                    FormFields = formFieldsEntity.Select(ff => new FormFieldModel { IsRequired = ff.Required, Name = ff.Name, DataType = (int)((DataTypeEnum)Enum.Parse(typeof(DataTypeEnum), ff.DataType)) }).ToList()
+                };
+            }
+            return formModel;
         }
     }
 }

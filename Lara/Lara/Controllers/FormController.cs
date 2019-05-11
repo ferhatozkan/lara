@@ -18,7 +18,7 @@ namespace Lara.Controllers
         }
 
         // GET: Form
-        public ActionResult Index()
+        public ActionResult Index(int? formId)
         {
             if (Session["UserName"] == null)
             {
@@ -43,5 +43,11 @@ namespace Lara.Controllers
             return Json(isSuccess);
         }
 
+        public ActionResult Forms(int formId)
+        {
+            FormModel formModel = formService.GetForm(Convert.ToInt32(formId));
+
+            return View(formModel);
+        }
     }
 }

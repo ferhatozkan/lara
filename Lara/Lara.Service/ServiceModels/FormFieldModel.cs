@@ -8,11 +8,11 @@ namespace Lara.Service.ServiceModels
 {
     public class FormFieldModel
     {
-        public int Id { get; set; }
-        public int FormId { get; set; }
-        public string Required { get; set; }
+        public int? Id { get; set; }
+        public int? FormId { get; set; }
+        public bool IsRequired { get; set; }
         public string Name { get; set; }
-        public string DataType { get; set; }
+        public int DataType { get; set; }
 
     }
 }

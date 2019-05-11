@@ -42,6 +42,9 @@
                         <label for="description">Description</label>
                         <input type="text" class="form-control" id="description" placeholder="Enter a description">
                     </div>
+                    <div id="field-box">
+                        <button type="button" class="btn btn-success" id="add-field-button">Add field</button>
+                    </div>
                 </form>
             </div>
 
@@ -108,6 +111,7 @@
                     title: 'Oops...',
                     text: 'Form name is required!'
                 })
+                return;
             }
 
             if (formName.length > 50) {
@@ -117,6 +121,7 @@
                     title: 'Oops...',
                     text: 'Form name can be at max 50 charaters!'
                 })
+                return;
             }
             if (formDescription.length > 50) {
                 // Notify User
@@ -125,9 +130,51 @@
                     title: 'Oops...',
                     text: 'Description can be at max 50 charaters!'
                 })
+                return;
             }
 
-            var formModel = { "Name": formName, "Description": formDescription }
+            var formFields = [];
+
+            $('.field-div').each(function (i, obj) {
+                var fieldName = obj.children[0].children[1].value;
+                var isRequired = obj.children[1].children[0].checked;
+                var dataType = parseInt(obj.children[2].children[0].value);
+
+                if (fieldName.length === 0) {
+                    // Notify User
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Field name is required!'
+                    })
+                    return;
+                }
+
+                if (dataType < 1) {
+                    // Notify User
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Please select a field type.'
+                    })
+                    return;
+                }
+
+                if (fieldName.length > 50) {
+                    // Notify User
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Field Name can be at max 50 charaters!'
+                    })
+                    return;
+                }
+
+                var formField = { "Name": fieldName, "IsRequired": isRequired, "DataType": dataType };
+                formFields.push(formField);
+            });
+            
+            var formModel = { "Name": formName, "Description": formDescription, "FormFields": formFields };
 
             // Submit form 
             $.ajax({
@@ -162,6 +209,27 @@
                     }
                 }
             });  
+        });
+
+        $("#add-field-button").click(function () {
+            var fieldBox = $("#field-box");
+            fieldBox.append(
+                '<div class="my-4 border-left border-primary p-2 field-div">' +
+                    '<div class="form-group fd-name">' +
+                        '<label>Field Name</label>'  +
+                        '<input type="text" class="form-control" placeholder="Enter a field name">' +
+                    '</div>' +
+                    '<div class="form-group form-check fd-required">' +
+                        '<input type="checkbox" class="form-check-input">' +
+                        '<label class="form-check-label">Is required ?</label>' +
+                    '</div>' +
+                    '<div class="fd-type"><select class="custom-select">' +
+                        '<option value="-1" selected>Select a field type</option>'+
+                        '<option value="1">Number</option>'+
+                        '<option value="2">String</option>'+
+                    '</select></div>' +
+                '</div>'
+            );
         });
     });
 </script>

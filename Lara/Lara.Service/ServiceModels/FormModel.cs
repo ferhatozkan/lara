@@ -13,6 +13,7 @@ namespace Lara.Service.ServiceModels
         public string Description { get; set; }
         public DateTime? CreatedAt { get; set; }
         public int? CreatedBy { get; set; }
-
+        public string CreatorUserName { get; set; }
+        public List<FormFieldModel> FormFields { get; set; }
     }       
 }

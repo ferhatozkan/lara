@@ -7,7 +7,7 @@
       <Diagram DiagramId="75ae5f8886cc427e8582ce2635b32855" Name="Diagram1">
         <EntityTypeShape EntityType="LARAModel.UserProfile" Width="1.5" PointX="3.625" PointY="1.125" IsExpanded="true" />
         <EntityTypeShape EntityType="LARAModel.Form" Width="1.5" PointX="4.375" PointY="3.875" />
-        <EntityTypeShape EntityType="LARAModel.FormField" Width="1.5" PointX="5.625" PointY="0.875" />
+        <EntityTypeShape EntityType="LARAModel.FormField" Width="1.5" PointX="6.625" PointY="3.875" />
         <AssociationConnector Association="LARAModel.FK_FormField_Form" />
       </Diagram>
     </edmx:Diagrams>
