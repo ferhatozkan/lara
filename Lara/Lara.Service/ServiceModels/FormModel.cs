@@ -14,5 +14,5 @@ namespace Lara.Service.ServiceModels
         public DateTime CreatedAt { get; set; }
         public int CreatedBy { get; set; }
 
-    }
+    }       
 }

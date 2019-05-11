@@ -31,7 +31,7 @@ namespace Lara.Controllers
         public ActionResult GetFormList()
         {
             var formList = formService.GetFormList();
-            return Json(formList);
+            return Json(formList, JsonRequestBehavior.AllowGet);
         }
 
     }
