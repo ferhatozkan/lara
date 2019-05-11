@@ -90,12 +90,20 @@ namespace Lara.Service
 
         public FormModel GetForm(int formId)
         {
-            FormModel formModel;
+            var formModel = new FormModel { FormFields = new List<FormFieldModel>() };
             using (LARA_Entities entities = new LARA_Entities())
             {
                 var formEntity = entities.Forms.FirstOrDefault(f => f.Id == formId);
+                if (formEntity == null)
+                {
+                    return formModel;
+                }
                 var formFieldsEntity = entities.FormFields.Where(ff => ff.FormId == formId).ToList();
                 var userProfileEntity = entities.UserProfiles.FirstOrDefault(u => u.UserId == formEntity.CreatedBy);
+                if (userProfileEntity == null)
+                {
+                    return formModel;
+                }
                 formModel = new FormModel
                 {
                     Name = formEntity.Name,

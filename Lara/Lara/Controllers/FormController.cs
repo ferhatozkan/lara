@@ -45,7 +45,13 @@ namespace Lara.Controllers
 
         public ActionResult Forms(int formId)
         {
-            FormModel formModel = formService.GetForm(Convert.ToInt32(formId));
+            if (Session["UserName"] == null)
+            {
+                return RedirectToAction("Index", "User");
+            }
+
+            FormModel formModel = formService.GetForm(formId);
+
 
             return View(formModel);
         }
