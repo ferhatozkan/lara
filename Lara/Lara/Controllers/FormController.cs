@@ -1,4 +1,5 @@
 ﻿using Lara.Service;
+using Lara.Service.ServiceModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,14 @@ namespace Lara.Controllers
         {
             var formList = formService.GetFormList();
             return Json(formList, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult CreateForm(FormModel formModel)
+        {
+            formModel.CreatedBy = Convert.ToInt32(Session["UserId"]);
+            bool isSuccess = formService.CreateForm(formModel);
+            return Json(isSuccess);
         }
 
     }

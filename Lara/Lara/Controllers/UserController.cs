@@ -25,10 +25,10 @@ namespace Lara.Controllers
         [HttpPost]
         public ActionResult Login(LoginModel loginModel)
         {
-            bool isLogged = userService.Login(loginModel);
-
+            int userId = userService.Login(loginModel);
             Session["UserName"] = loginModel.UserName.ToString();
-            return Json(isLogged);
+            Session["UserId"] = userId.ToString();
+            return Json(userId != 0);
         }
     }
 }

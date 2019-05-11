@@ -25,5 +25,42 @@ namespace Lara.Service
 
             return formList;
         }
+
+        public bool CreateForm(FormModel formModel)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(formModel.Name) || formModel.Name.Length > 50 || (!string.IsNullOrEmpty(formModel.Description) && formModel.Description.Length > 50))
+                {
+                    return false;
+                }
+                using (LARA_Entities entities = new LARA_Entities())
+                {
+                    var form = entities.Forms.FirstOrDefault(f => f.Name == formModel.Name);
+
+                    if (form != null)
+                    {
+                        return false;
+                    }
+
+                    var newForm = new Form()
+                    {
+                        Name = formModel.Name,
+                        Description = formModel.Description,
+                        CreatedAt = DateTime.Now,
+                        CreatedBy = formModel.CreatedBy.Value
+                    };
+
+                    entities.Forms.Add(newForm);
+                    entities.SaveChanges();
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
+        }
     }
 }

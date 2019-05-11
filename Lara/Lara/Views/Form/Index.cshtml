@@ -5,6 +5,8 @@
 }
 
 <h2>FORM</h2>
+<button class="btn btn-success btn-sm my-3" data-toggle="modal" data-target="#create-form"> Yeni Form Oluştur </button>
+
 <table id="form-grid">
     <thead>
         <tr>
@@ -18,40 +20,148 @@
 </table>
 
 
+<!-- The Modal -->
+<div class="modal" id="create-form">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Create a Form</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form id="create-form">
+                    <div class="form-group">
+                        <label for="name">Name of Form</label>
+                        <input type="text" class="form-control" id="form-name" placeholder="Enter a form name">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" class="form-control" id="description" placeholder="Enter a description">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="create-form-button">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
-        $.ajax({
-            url: '/Form/GetFormList',
-            method: 'get',
-            dataType: 'json',
-            success: function (data) {
-                $('#form-grid').DataTable({
-                    data: data,
-                    columns: [
-                        { "data": "Id", "autoWidth": true },
-                        { "data": "Name", "autoWidth": true },
-                        { "data": "Description", "autoWidth": true },
-                        {
-                            "data": "CreatedAt",
-                            "render": function (jsonDate) {
-                                var value = new Date
-                                 (
-                                 parseInt(jsonDate.replace(/(^.*\()|([+-].*$)/g, ''))
-                                 );
-                                var date = value.getMonth() +
-                                                         1 +
-                                                       "/" +
-                                           value.getDate() +
-                                                       "/" +
-                                       value.getFullYear();
-                               return date
-                            }
-                        },
-                        { "data": "CreatedBy", "autoWidth": true }
-                    ]
+        var dataTable;
 
-                });
+        // Return form list
+        function getFormList() {
+            $.ajax({
+                url: '/Form/GetFormList',
+                method: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    dataTable = $('#form-grid').DataTable({
+                        data: data,
+                        columns: [
+                            { "data": "Id", "autoWidth": true },
+                            { "data": "Name", "autoWidth": true },
+                            { "data": "Description", "autoWidth": true },
+                            {
+                                "data": "CreatedAt",
+                                "render": function (jsonDate) {
+                                    var value = new Date
+                                        (
+                                            parseInt(jsonDate.replace(/(^.*\()|([+-].*$)/g, ''))
+                                        );
+                                    var date = value.getMonth() +
+                                        1 +
+                                        "/" +
+                                        value.getDate() +
+                                        "/" +
+                                        value.getFullYear();
+                                    return date
+                                }
+                            },
+                            { "data": "CreatedBy", "autoWidth": true }
+                        ]
+
+                    });
+                }
+            });
+        }
+
+        getFormList();
+
+        $("#create-form-button").click(function () {
+            var formName = $("#form-name").val();
+            var formDescription = $("#description").val(); 
+
+            if (formName.length === 0) {
+                // Notify User
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Form name is required!'
+                })
             }
+
+            if (formName.length > 50) {
+                // Notify User
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Form name can be at max 50 charaters!'
+                })
+            }
+            if (formDescription.length > 50) {
+                // Notify User
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Description can be at max 50 charaters!'
+                })
+            }
+
+            var formModel = { "Name": formName, "Description": formDescription }
+
+            // Submit form 
+            $.ajax({
+                url: '/Form/CreateForm',
+                method: 'post',
+                dataType: 'json',
+                data: formModel,
+                success: function (response) {
+
+                    if (response) {
+                        // Hide Modal
+                        $('#create-form').modal('hide');
+
+                        // Notify User
+                        Swal.fire({
+                          type: 'success',
+                          title: 'Success!',
+                          text: 'Form saved.'
+                        })
+
+                        // Re-list forms
+                        dataTable.destroy();
+                        getFormList();
+
+                    } else {
+                        // Notify User
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!'
+                        })
+                    }
+                }
+            });  
         });
     });
 </script>
